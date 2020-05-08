@@ -1,12 +1,5 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'D:/Downloads/articlewin.ui'
-#
-# Created by: PyQt5 UI code generator 5.9.2
-#
-# WARNING! All changes made in this file will be lost!
-
 from PyQt5 import QtCore, QtGui, QtWidgets
+import sqlite3
 
 class Ui_ProductWindow1(object):
     def setupUi(self, MainWindow):
@@ -224,7 +217,7 @@ class Ui_ProductWindow1(object):
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_2)
         self.gridLayout_6.setObjectName("gridLayout_6")
-        self.textEdit_2 = QtWidgets.QTextEdit(self.scrollAreaWidgetContents_2)
+        self.textEdit_2 = QtWidgets.QTextBrowser(self.scrollAreaWidgetContents_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -328,6 +321,31 @@ class Ui_ProductWindow1(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+############# show all current db
+        Prod_id = '1' #Replace with input from mainmenu
+        connection = sqlite3.connect("Comments.db")
+        results = connection.execute("SELECT * FROM CTABLE WHERE ID = ?", (Prod_id))
+        for data in results:
+            self.textEdit_2.append(data[0] + ":")
+            self.textEdit_2.append(data[1])
+            self.textEdit_2.append("")
+        connection.close()
+##############
+        self.pushButton_4.clicked.connect(self.Send) ########### COMMENT CONNECT
+##############
+
+    def Send(self):
+        comment = self.textEdit.text()
+        connection = sqlite3.connect("Comments.db")
+        connection.execute("INSERT INTO CTABLE (USERNAME, COMMENT, ID) VALUES (?, ?, ?)", ("Anonymous", comment, 1))
+        connection.commit()
+        connection.close()
+        self.textEdit.setText("")
+        self.textEdit_2.append("Anomymous:")
+        self.textEdit_2.append(comment)
+        self.textEdit_2.append("")
+############################
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
